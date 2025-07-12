@@ -18,6 +18,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = {"id"})
 public class Book {
     
+    @Getter
     @EmbeddedId
     @Setter(AccessLevel.PRIVATE)    // only for JPA
     private BookId id;
@@ -41,28 +42,8 @@ public class Book {
         this.authors = new ArrayList<>();
     }
 
-    public BookId getId() {
-        return id;
-    }
-
     public void setId(BookId id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
     }
 
     // Override Lombok getters for collections to return defensive copies
