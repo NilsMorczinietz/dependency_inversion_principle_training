@@ -2,6 +2,7 @@ package training.a2.author.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import training.a2.author.domain.Author;
 import training.a2.author.domain.AuthorId;
 import training.a2.author.domain.AuthorRepository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AuthorService {
     private AuthorRepository authorRepository;
     private BookService bookService;

@@ -2,6 +2,7 @@ package training.a1.course.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import training.a1.course.domain.Course;
 import training.a1.course.domain.CourseId;
 import training.a1.course.domain.CourseRepository;
@@ -12,6 +13,7 @@ import training.a1.student.domain.StudentRepository;
 import java.util.List;
 
 @Service
+@Transactional
 public class CourseService {
     private CourseRepository courseRepository;
     private StudentRepository studentRepository;
