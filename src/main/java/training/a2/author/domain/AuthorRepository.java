@@ -3,9 +3,9 @@ package training.a2.author.domain;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import training.a2.book.domain.BookId;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, AuthorId> {
@@ -15,8 +15,8 @@ public interface AuthorRepository extends JpaRepository<Author, AuthorId> {
     
     List<Author> findByEmail(String email);
     
-    @Query("SELECT a FROM Author a WHERE :bookId MEMBER OF a.publishedBooks")
-    List<Author> findByPublishedBooksContains(BookId bookId);
+    @Query("SELECT a FROM Author a WHERE :bookId MEMBER OF a.publishedBookIds")
+    List<Author> findByPublishedBookIdsContains(UUID bookId);
     
     List<Author> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
         String firstNamePart, String lastNamePart);

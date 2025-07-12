@@ -7,10 +7,10 @@ import training.a2.author.domain.AuthorId;
 import training.a2.author.domain.AuthorRepository;
 import training.a2.book.application.BookService;
 import training.a2.book.domain.Book;
-import training.a2.book.domain.BookId;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthorService {
@@ -44,17 +44,17 @@ public class AuthorService {
         return authorRepository.findByLastName(lastName);
     }
 
-    public List<Author> getAuthorsForBook(BookId bookId) {
+    public List<Author> getAuthorsForBook(UUID bookId) {
         if (bookId == null) throw new IllegalArgumentException("BookId is null");
-        return authorRepository.findByPublishedBooksContains(bookId);
+        return authorRepository.findByPublishedBookIdsContains(bookId);
     }
 
-    public int getBookCountForAuthor(AuthorId authorId) {
+    public int getBookCountForAuthor(UUID authorId) {
         List<Book> books = bookService.getBooksForAuthor(authorId);
         return books.size();
     }
 
-    public int getTotalPagesWrittenByAuthor(AuthorId authorId) {
+    public int getTotalPagesWrittenByAuthor(UUID authorId) {
         return bookService.getTotalPagesForAuthor(authorId);
     }
 
@@ -66,7 +66,7 @@ public class AuthorService {
             searchTerm, searchTerm);
     }
 
-    public boolean isProductiveAuthor(AuthorId authorId) {
+    public boolean isProductiveAuthor(UUID authorId) {
         return getBookCountForAuthor(authorId) >= 3;
     }
 }

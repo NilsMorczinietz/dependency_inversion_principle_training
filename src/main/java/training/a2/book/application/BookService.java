@@ -11,6 +11,7 @@ import training.a2.author.domain.AuthorRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BookService {
@@ -44,23 +45,31 @@ public class BookService {
         return bookRepository.findByTitle(title);
     }
 
-    public List<Book> getBooksForAuthor(AuthorId authorId) {
+    public List<Book> getBooksForAuthor(UUID authorId) {
         if (authorId == null) throw new IllegalArgumentException("AuthorId is null");
-        return bookRepository.findByAuthorsContains(authorId);
+        return bookRepository.findByAuthorIdsContains(authorId);
     }
 
-    public void assignAuthorToBook(Author author, Book book) {
-        if (author == null) throw new IllegalArgumentException("Author is null");
-        if (book == null) throw new IllegalArgumentException("Book is null");
+    public void assignAuthorToBook(UUID authorId, UUID bookId) {
+        if (authorId == null) throw new IllegalArgumentException("AuthorId is null");
+        if (bookId == null) throw new IllegalArgumentException("BookId is null");
         
-        book.addAuthor(author);
-        author.addBook(book);
+        Optional<Book> bookOpt = bookRepository.findById(new BookId(bookId));
+        Optional<Author> authorOpt = authorRepository.findById(new AuthorId(authorId));
         
-        bookRepository.save(book);
-        authorRepository.save(author);
+        if (bookOpt.isPresent() && authorOpt.isPresent()) {
+            Book book = bookOpt.get();
+            Author author = authorOpt.get();
+            
+            book.addAuthor(authorId);
+            author.addBook(bookId);
+            
+            bookRepository.save(book);
+            authorRepository.save(author);
+        }
     }
 
-    public int getTotalPagesForAuthor(AuthorId authorId) {
+    public int getTotalPagesForAuthor(UUID authorId) {
         List<Book> books = getBooksForAuthor(authorId);
         return books.stream()
                    .mapToInt(Book::getPages)

@@ -5,8 +5,6 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import lombok.*;
-import training.a2.book.domain.BookId;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,36 +20,24 @@ public class Author {
     @Setter(AccessLevel.PRIVATE)    // only for JPA
     private AuthorId id;
     
-    public void setId(UUID id){
-        this.id = new AuthorId(id);
-    }
-    
     private String firstName;
     private String lastName;
     private String email;
     
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<BookId> publishedBooks;
+    private List<UUID> publishedBookIds;
 
     public Author(String firstName, String lastName, String email) {
         this.id = new AuthorId();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.publishedBooks = new ArrayList<>();
-    }
-
-    public AuthorId getId() {
-        return id;
-    }
-
-    public void setId(AuthorId id) {
-        this.id = id;
+        this.publishedBookIds = new ArrayList<>();
     }
 
     // Override Lombok getters for collections to return defensive copies
-    public List<BookId> getPublishedBooks() {
-        return List.copyOf(publishedBooks);
+    public List<UUID> getPublishedBookIds() {
+        return List.copyOf(publishedBookIds);
     }
     
     // Business methods
@@ -59,17 +45,17 @@ public class Author {
         return firstName + " " + lastName;
     }
 
-    public void addBook(training.a2.book.domain.Book book) {
-        if (book != null && !publishedBooks.contains(book.getId())) {
-            publishedBooks.add(book.getId());
+    public void addBook(UUID bookId) {
+        if (bookId != null && !publishedBookIds.contains(bookId)) {
+            publishedBookIds.add(bookId);
         }
     }
 
-    public void removeBook(BookId bookId) {
-        publishedBooks.remove(bookId);
+    public void removeBook(UUID bookId) {
+        publishedBookIds.remove(bookId);
     }
 
     public int getBookCount() {
-        return publishedBooks.size();
+        return publishedBookIds.size();
     }
 }

@@ -2,7 +2,6 @@ package training.a2.author.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import training.a2.book.domain.BookId;
 
 import java.util.UUID;
 
@@ -11,38 +10,35 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthorTest {
 
     private Author author;
-    private AuthorId authorId;
 
     @BeforeEach
     void setUp() {
-        authorId = new AuthorId(UUID.randomUUID());
         author = new Author("John", "Doe", "john.doe@example.com");
-        author.setId(authorId.getId());
     }
 
     @Test
     void shouldCreateAuthorWithCorrectProperties() {
-        assertEquals(authorId, author.getId());
+        assertNotNull(author.getId());
         assertEquals("John", author.getFirstName());
         assertEquals("Doe", author.getLastName());
         assertEquals("john.doe@example.com", author.getEmail());
         assertEquals("John Doe", author.getFullName());
-        assertTrue(author.getPublishedBooks().isEmpty());
+        assertTrue(author.getPublishedBookIds().isEmpty());
     }
 
     @Test
     void shouldManageBooks() {
-        BookId bookId1 = new BookId(UUID.randomUUID());
-        BookId bookId2 = new BookId(UUID.randomUUID());
+        UUID bookId1 = UUID.randomUUID();
+        UUID bookId2 = UUID.randomUUID();
         
-        // Test that getPublishedBooks() returns immutable list
+        // Test that getPublishedBookIds() returns immutable list
         assertThrows(UnsupportedOperationException.class, () -> {
-            author.getPublishedBooks().add(bookId1);
+            author.getPublishedBookIds().add(bookId1);
         });
         
         // Test removing from immutable list should also fail
         assertThrows(UnsupportedOperationException.class, () -> {
-            author.getPublishedBooks().remove(bookId2);
+            author.getPublishedBookIds().remove(bookId2);
         });
     }
 
@@ -51,15 +47,17 @@ class AuthorTest {
         assertEquals(0, author.getBookCount());
         
         // Simulate adding books via business logic
-        BookId bookId = new BookId(UUID.randomUUID());
-        author.removeBook(bookId); // Should not crash on empty list
+        UUID bookId = UUID.randomUUID();
+        author.addBook(bookId);
+        assertEquals(1, author.getBookCount());
         
+        author.removeBook(bookId);
         assertEquals(0, author.getBookCount());
     }
 
     @Test
     void shouldHandleBookRemoval() {
-        BookId bookId = new BookId(UUID.randomUUID());
+        UUID bookId = UUID.randomUUID();
         
         // Remove non-existing book should not crash
         author.removeBook(bookId);
@@ -69,7 +67,7 @@ class AuthorTest {
     @Test
     void shouldReturnImmutableBooksList() {
         assertThrows(UnsupportedOperationException.class, () -> {
-            author.getPublishedBooks().clear();
+            author.getPublishedBookIds().clear();
         });
     }
 
