@@ -15,7 +15,8 @@
 1. **Problem prüfen:** `mvn test -Dtest="training.*.CycleTest"` → alle Tests ❌ rot
 2. **Aufgabe wählen:** A1, A2 oder A3 README lesen
 3. **DIP anwenden:** Zyklische Abhängigkeiten auflösen
-4. **Erfolg prüfen:** Tests werden ✅ grün
+4. **Wichtig:** Business-Logic-Tests müssen grün bleiben
+5. **Erfolg prüfen:** Tests werden ✅ grün
 
 ## 🧪 Tests
 
@@ -23,10 +24,13 @@
 # Alle Cycle-Tests
 mvn test -Dtest="training.*.CycleTest"
 
+# Business-Logic-Tests (müssen grün bleiben)
+mvn test -Dtest="training.*.*.domain.*Test"
+
 # Einzelne Aufgabe
 mvn test -Dtest="training.a1.CycleTest"
 mvn test -Dtest="training.a2.CycleTest" 
 mvn test -Dtest="training.a3.CycleTest"
 ```
 
-**Erfolgskriterium:** Alle CycleTests grün ✅
+**Erfolgskriterium:** Alle CycleTests grün ✅ + Business-Logic-Tests bleiben grün ✅
