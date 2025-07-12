@@ -12,6 +12,7 @@ import training.a3.customer.domain.CustomerRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -45,23 +46,31 @@ public class ProductService {
         return productRepository.findByCategory(category);
     }
 
-    public List<Product> getProductsForCustomer(CustomerId customerId) {
+    public List<Product> getProductsForCustomer(UUID customerId) {
         if (customerId == null) throw new IllegalArgumentException("CustomerId is null");
-        return productRepository.findByInterestedCustomersContains(customerId);
+        return productRepository.findByInterestedCustomerIdsContains(customerId);
     }
 
-    public void addCustomerInterest(Customer customer, Product product) {
-        if (customer == null) throw new IllegalArgumentException("Customer is null");
-        if (product == null) throw new IllegalArgumentException("Product is null");
+    public void addCustomerInterest(UUID customerId, UUID productId) {
+        if (customerId == null) throw new IllegalArgumentException("CustomerId is null");
+        if (productId == null) throw new IllegalArgumentException("ProductId is null");
         
-        product.addInterestedCustomer(customer);
-        customer.addToWishlist(product);
+        Optional<Product> productOpt = productRepository.findById(new ProductId(productId));
+        Optional<Customer> customerOpt = customerRepository.findById(new CustomerId(customerId));
         
-        productRepository.save(product);
-        customerRepository.save(customer);
+        if (productOpt.isPresent() && customerOpt.isPresent()) {
+            Product product = productOpt.get();
+            Customer customer = customerOpt.get();
+            
+            product.addInterestedCustomer(customerId);
+            customer.addToWishlist(productId);
+            
+            productRepository.save(product);
+            customerRepository.save(customer);
+        }
     }
 
-    public BigDecimal getTotalWishlistValue(CustomerId customerId) {
+    public BigDecimal getTotalWishlistValue(UUID customerId) {
         List<Product> products = getProductsForCustomer(customerId);
         return products.stream()
                       .map(Product::getPrice)
@@ -75,17 +84,27 @@ public class ProductService {
         return productRepository.findByNameContainingIgnoreCase(searchTerm);
     }
 
-    public boolean purchaseProduct(Customer customer, Product product, int quantity) {
-        if (customer == null) throw new IllegalArgumentException("Customer is null");
-        if (product == null) throw new IllegalArgumentException("Product is null");
+    public boolean purchaseProduct(UUID customerId, UUID productId, int quantity) {
+        if (customerId == null) throw new IllegalArgumentException("CustomerId is null");
+        if (productId == null) throw new IllegalArgumentException("ProductId is null");
         if (quantity <= 0) throw new IllegalArgumentException("Quantity must be positive");
+        
+        Optional<Product> productOpt = productRepository.findById(new ProductId(productId));
+        Optional<Customer> customerOpt = customerRepository.findById(new CustomerId(customerId));
+        
+        if (productOpt.isEmpty() || customerOpt.isEmpty()) {
+            return false;
+        }
+        
+        Product product = productOpt.get();
+        Customer customer = customerOpt.get();
         
         if (product.getStockQuantity() < quantity) {
             return false; // Not enough stock
         }
         
         product.reduceStock(quantity);
-        customer.addToPurchaseHistory(product);
+        customer.addToPurchaseHistory(productId);
         
         productRepository.save(product);
         customerRepository.save(customer);

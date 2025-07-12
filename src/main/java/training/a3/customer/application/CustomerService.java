@@ -7,11 +7,11 @@ import training.a3.customer.domain.CustomerId;
 import training.a3.customer.domain.CustomerRepository;
 import training.a3.product.application.ProductService;
 import training.a3.product.domain.Product;
-import training.a3.product.domain.ProductId;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CustomerService {
@@ -45,17 +45,17 @@ public class CustomerService {
         return customerRepository.findByLastName(lastName);
     }
 
-    public List<Customer> getCustomersForProduct(ProductId productId) {
+    public List<Customer> getCustomersForProduct(UUID productId) {
         if (productId == null) throw new IllegalArgumentException("ProductId is null");
-        return customerRepository.findByWishlistContains(productId);
+        return customerRepository.findByProductWishlistIdsContains(productId);
     }
 
-    public int getWishlistSize(CustomerId customerId) {
+    public int getWishlistSize(UUID customerId) {
         List<Product> products = productService.getProductsForCustomer(customerId);
         return products.size();
     }
 
-    public BigDecimal getWishlistTotalValue(CustomerId customerId) {
+    public BigDecimal getWishlistTotalValue(UUID customerId) {
         return productService.getTotalWishlistValue(customerId);
     }
 
@@ -67,16 +67,16 @@ public class CustomerService {
             searchTerm, searchTerm);
     }
 
-    public boolean isVipCustomer(CustomerId customerId) {
-        Optional<Customer> customerOpt = getCustomerById(customerId);
+    public boolean isVipCustomer(UUID customerId) {
+        Optional<Customer> customerOpt = customerRepository.findById(new CustomerId(customerId));
         if (customerOpt.isEmpty()) return false;
         
         Customer customer = customerOpt.get();
-        return customer.getPurchaseHistory().size() >= 10;
+        return customer.getPurchaseHistoryIds().size() >= 10;
     }
 
-    public List<Customer> getBuyersOfProduct(ProductId productId) {
+    public List<Customer> getBuyersOfProduct(UUID productId) {
         if (productId == null) throw new IllegalArgumentException("ProductId is null");
-        return customerRepository.findByPurchaseHistoryContains(productId);
+        return customerRepository.findByPurchaseHistoryIdsContains(productId);
     }
 }

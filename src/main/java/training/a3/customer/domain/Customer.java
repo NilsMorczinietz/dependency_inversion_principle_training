@@ -5,8 +5,6 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import lombok.*;
-import training.a3.product.domain.ProductId;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,20 +20,16 @@ public class Customer {
     @Setter(AccessLevel.PRIVATE)    // only for JPA
     private CustomerId id;
     
-    public void setId(UUID id){
-        this.id = new CustomerId(id);
-    }
-    
     private String firstName;
     private String lastName;
     private String email;
     private String address;
     
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<ProductId> wishlist;
+    private List<UUID> productWishlistIds;
     
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<ProductId> purchaseHistory;
+    private List<UUID> purchaseHistoryIds;
 
     public Customer(String firstName, String lastName, String email, String address) {
         this.id = new CustomerId();
@@ -43,16 +37,12 @@ public class Customer {
         this.lastName = lastName;
         this.email = email;
         this.address = address;
-        this.wishlist = new ArrayList<>();
-        this.purchaseHistory = new ArrayList<>();
+        this.productWishlistIds = new ArrayList<>();
+        this.purchaseHistoryIds = new ArrayList<>();
     }
 
     public CustomerId getId() {
         return id;
-    }
-
-    public void setId(CustomerId id) {
-        this.id = id;
     }
 
     public String getFirstName() {
@@ -92,44 +82,44 @@ public class Customer {
         return firstName + " " + lastName;
     }
 
-    public void addToWishlist(training.a3.product.domain.Product product) {
-        if (product != null && !wishlist.contains(product.getId())) {
-            wishlist.add(product.getId());
+    public void addToWishlist(UUID productId) {
+        if (productId != null && !productWishlistIds.contains(productId)) {
+            productWishlistIds.add(productId);
         }
     }
 
-    public void removeFromWishlist(ProductId productId) {
-        wishlist.remove(productId);
+    public void removeFromWishlist(UUID productId) {
+        productWishlistIds.remove(productId);
     }
 
-    public void addToPurchaseHistory(training.a3.product.domain.Product product) {
-        if (product != null) {
-            purchaseHistory.add(product.getId());
+    public void addToPurchaseHistory(UUID productId) {
+        if (productId != null) {
+            purchaseHistoryIds.add(productId);
         }
     }
 
-    public boolean hasProductInWishlist(ProductId productId) {
-        return wishlist.contains(productId);
+    public boolean hasProductInWishlist(UUID productId) {
+        return productWishlistIds.contains(productId);
     }
 
-    public boolean hasPurchased(ProductId productId) {
-        return purchaseHistory.contains(productId);
+    public boolean hasPurchased(UUID productId) {
+        return purchaseHistoryIds.contains(productId);
     }
 
     public int getWishlistSize() {
-        return wishlist.size();
+        return productWishlistIds.size();
     }
 
     public int getPurchaseCount() {
-        return purchaseHistory.size();
+        return purchaseHistoryIds.size();
     }
     
     // Override Lombok getters for collections to return defensive copies
-    public List<ProductId> getWishlist() {
-        return List.copyOf(wishlist);
+    public List<UUID> getProductWishlistIds() {
+        return List.copyOf(productWishlistIds);
     }
     
-    public List<ProductId> getPurchaseHistory() {
-        return List.copyOf(purchaseHistory);
+    public List<UUID> getPurchaseHistoryIds() {
+        return List.copyOf(purchaseHistoryIds);
     }
 }

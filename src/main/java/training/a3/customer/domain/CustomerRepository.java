@@ -3,9 +3,9 @@ package training.a3.customer.domain;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import training.a3.product.domain.ProductId;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, CustomerId> {
@@ -15,11 +15,11 @@ public interface CustomerRepository extends JpaRepository<Customer, CustomerId> 
     
     List<Customer> findByEmail(String email);
     
-    @Query("SELECT c FROM Customer c WHERE :productId MEMBER OF c.wishlist")
-    List<Customer> findByWishlistContains(ProductId productId);
+    @Query("SELECT c FROM Customer c WHERE :productId MEMBER OF c.productWishlistIds")
+    List<Customer> findByProductWishlistIdsContains(UUID productId);
     
-    @Query("SELECT c FROM Customer c WHERE :productId MEMBER OF c.purchaseHistory")
-    List<Customer> findByPurchaseHistoryContains(ProductId productId);
+    @Query("SELECT c FROM Customer c WHERE :productId MEMBER OF c.purchaseHistoryIds")
+    List<Customer> findByPurchaseHistoryIdsContains(UUID productId);
     
     List<Customer> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
         String firstNamePart, String lastNamePart);

@@ -2,7 +2,6 @@ package training.a3.customer.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import training.a3.product.domain.ProductId;
 
 import java.util.UUID;
 
@@ -11,18 +10,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class CustomerTest {
 
     private Customer customer;
-    private CustomerId customerId;
 
     @BeforeEach
     void setUp() {
-        customerId = new CustomerId(UUID.randomUUID());
         customer = new Customer("John", "Doe", "john.doe@example.com", "123 Main St");
-        customer.setId(customerId.getId());
     }
 
     @Test
     void shouldCreateCustomerWithCorrectProperties() {
-        assertEquals(customerId, customer.getId());
+        assertNotNull(customer.getId());
         assertEquals("John", customer.getFirstName());
         assertEquals("Doe", customer.getLastName());
         assertEquals("john.doe@example.com", customer.getEmail());
@@ -32,75 +28,103 @@ class CustomerTest {
 
     @Test
     void shouldInitializeEmptyLists() {
-        assertTrue(customer.getWishlist().isEmpty());
-        assertTrue(customer.getPurchaseHistory().isEmpty());
+        assertTrue(customer.getProductWishlistIds().isEmpty());
+        assertTrue(customer.getPurchaseHistoryIds().isEmpty());
     }
 
     @Test
     void shouldReturnImmutableLists() {
-        ProductId productId = new ProductId(UUID.randomUUID());
-
-        // Test that returned lists are immutable
-        assertThrows(UnsupportedOperationException.class, () -> 
-            customer.getWishlist().add(productId));
+        UUID productId = UUID.randomUUID();
         
-        assertThrows(UnsupportedOperationException.class, () -> 
-            customer.getPurchaseHistory().add(productId));
+        // Test that lists are immutable
+        assertThrows(UnsupportedOperationException.class, () ->
+            customer.getProductWishlistIds().add(productId));
+        
+        assertThrows(UnsupportedOperationException.class, () ->
+            customer.getPurchaseHistoryIds().add(productId));
     }
 
     @Test
-    void shouldManageWishlistWithProductIds() {
-        ProductId productId1 = new ProductId(UUID.randomUUID());
-        ProductId productId2 = new ProductId(UUID.randomUUID());
-
+    void shouldManageWishlist() {
+        UUID productId1 = UUID.randomUUID();
+        UUID productId2 = UUID.randomUUID();
+        
         // Initially empty
-        assertFalse(customer.hasProductInWishlist(productId1));
-        assertTrue(customer.getWishlist().isEmpty());
-
-        // Note: We can't test addToWishlist(Product) without creating circular dependency
-        // This will be tested in integration tests after DIP refactoring
-
-        // Test direct ID operations (these would be used internally)
-        // For now, we test the query methods
-        assertFalse(customer.hasProductInWishlist(productId1));
+        assertEquals(0, customer.getWishlistSize());
+        assertTrue(customer.getProductWishlistIds().isEmpty());
+        
+        // Add to wishlist
+        customer.addToWishlist(productId1);
+        assertEquals(1, customer.getWishlistSize());
+        assertTrue(customer.hasProductInWishlist(productId1));
         assertFalse(customer.hasProductInWishlist(productId2));
+        
+        // Add another
+        customer.addToWishlist(productId2);
+        assertEquals(2, customer.getWishlistSize());
+        assertTrue(customer.hasProductInWishlist(productId2));
+        
+        // Remove from wishlist
+        customer.removeFromWishlist(productId1);
+        assertEquals(1, customer.getWishlistSize());
+        assertFalse(customer.hasProductInWishlist(productId1));
+        assertTrue(customer.hasProductInWishlist(productId2));
     }
 
     @Test
-    void shouldManagePurchaseHistoryWithProductIds() {
-        ProductId productId1 = new ProductId(UUID.randomUUID());
-        ProductId productId2 = new ProductId(UUID.randomUUID());
-
+    void shouldManagePurchaseHistory() {
+        UUID productId1 = UUID.randomUUID();
+        UUID productId2 = UUID.randomUUID();
+        
         // Initially empty
-        assertFalse(customer.hasPurchased(productId1));
-        assertTrue(customer.getPurchaseHistory().isEmpty());
-
-        // Note: We can't test addToPurchaseHistory(Product) without creating circular dependency
-        // This will be tested in integration tests after DIP refactoring
-
-        // Test query methods
-        assertFalse(customer.hasPurchased(productId1));
+        assertEquals(0, customer.getPurchaseCount());
+        assertTrue(customer.getPurchaseHistoryIds().isEmpty());
+        
+        // Add purchase
+        customer.addToPurchaseHistory(productId1);
+        assertEquals(1, customer.getPurchaseCount());
+        assertTrue(customer.hasPurchased(productId1));
         assertFalse(customer.hasPurchased(productId2));
+        
+        // Add another purchase
+        customer.addToPurchaseHistory(productId2);
+        assertEquals(2, customer.getPurchaseCount());
+        assertTrue(customer.hasPurchased(productId2));
     }
 
     @Test
-    void shouldHandleNullChecksInQueryMethods() {
-        // Test with null ProductId - should return false, not throw exception
-        assertFalse(customer.hasProductInWishlist(null));
-        assertFalse(customer.hasPurchased(null));
-    }
-
-    @Test
-    void shouldUpdateCustomerProperties() {
+    void shouldHandlePropertyChanges() {
         customer.setFirstName("Jane");
         customer.setLastName("Smith");
         customer.setEmail("jane.smith@example.com");
-        customer.setAddress("456 Oak Avenue");
-
+        customer.setAddress("456 Oak St");
+        
         assertEquals("Jane", customer.getFirstName());
         assertEquals("Smith", customer.getLastName());
         assertEquals("jane.smith@example.com", customer.getEmail());
-        assertEquals("456 Oak Avenue", customer.getAddress());
+        assertEquals("456 Oak St", customer.getAddress());
         assertEquals("Jane Smith", customer.getFullName());
+    }
+
+    @Test
+    void shouldHandleDuplicateWishlistEntries() {
+        UUID productId = UUID.randomUUID();
+        
+        customer.addToWishlist(productId);
+        assertEquals(1, customer.getWishlistSize());
+        
+        // Adding same product again should not increase size
+        customer.addToWishlist(productId);
+        assertEquals(1, customer.getWishlistSize());
+    }
+
+    @Test
+    void shouldHandleNullValues() {
+        // Adding null should not crash
+        customer.addToWishlist(null);
+        assertEquals(0, customer.getWishlistSize());
+        
+        customer.addToPurchaseHistory(null);
+        assertEquals(0, customer.getPurchaseCount());
     }
 }

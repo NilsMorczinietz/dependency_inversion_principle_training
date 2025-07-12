@@ -5,8 +5,6 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import lombok.*;
-import training.a3.customer.domain.CustomerId;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +21,6 @@ public class Product {
     @Setter(AccessLevel.PRIVATE)    // only for JPA
     private ProductId id;
     
-    public void setId(UUID id){
-        this.id = new ProductId(id);
-    }
-    
     private String name;
     private String description;
     private BigDecimal price;
@@ -34,7 +28,7 @@ public class Product {
     private String category;
     
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<CustomerId> interestedCustomers;
+    private List<UUID> interestedCustomerIds;
 
     public Product(String name, String description, BigDecimal price, int stockQuantity, String category) {
         this.id = new ProductId();
@@ -43,18 +37,18 @@ public class Product {
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.category = category;
-        this.interestedCustomers = new ArrayList<>();
+        this.interestedCustomerIds = new ArrayList<>();
     }
 
     // Business methods
-    public void addInterestedCustomer(training.a3.customer.domain.Customer customer) {
-        if (customer != null && !interestedCustomers.contains(customer.getId())) {
-            interestedCustomers.add(customer.getId());
+    public void addInterestedCustomer(UUID customerId) {
+        if (customerId != null && !interestedCustomerIds.contains(customerId)) {
+            interestedCustomerIds.add(customerId);
         }
     }
 
-    public void removeInterestedCustomer(CustomerId customerId) {
-        interestedCustomers.remove(customerId);
+    public void removeInterestedCustomer(UUID customerId) {
+        interestedCustomerIds.remove(customerId);
     }
 
     public boolean isInStock() {
@@ -69,7 +63,7 @@ public class Product {
     }
 
     // Override Lombok getters for collections to return defensive copies
-    public List<CustomerId> getInterestedCustomers() {
-        return List.copyOf(interestedCustomers);
+    public List<UUID> getInterestedCustomerIds() {
+        return List.copyOf(interestedCustomerIds);
     }
 }
