@@ -28,3 +28,30 @@ Diese zyklische Abhängigkeit führt dazu, dass der ArchUnit-Test `CycleTest` fe
 Wenn das DIP korrekt angewendet wurde, läuft der Test `CycleTest.testNoCyclicDependenciesBetweenPackages()` erfolgreich durch (grün).
 
 Der Test `training.a1.CycleTest` prüft, ob zyklische Abhängigkeiten zwischen den Paketen eliminiert wurden.
+
+### Aufgabe A2: Bibliotheks-Domäne - Zyklische Abhängigkeiten auflösen
+**Paket:** `training.a2`
+
+**Domäne:** Bibliotheksverwaltung mit Büchern und Autoren
+
+**Problem:** 
+- `BookService` ist abhängig von `AuthorRepository` und `Author`
+- `AuthorService` ist abhängig von `BookService` und `Book`
+- `Book` und `Author` Entitäten referenzieren sich gegenseitig über IDs
+- Dies führt zu einer zyklischen Abhängigkeit zwischen den Paketen `book` und `author`
+
+**Spezifische zyklische Abhängigkeiten:**
+- `BookService.assignAuthorToBook()` verwendet `Author` und `AuthorRepository`
+- `AuthorService.getBookCountForAuthor()` verwendet `BookService`
+- `Book.addAuthor()` akzeptiert `Author` Parameter
+- `Author.addBook()` akzeptiert `Book` Parameter
+
+**Erfolgskriterium:**
+Wenn das DIP korrekt angewendet wurde, läuft der Test `training.a2.CycleTest.testNoCyclicDependenciesBetweenPackages()` erfolgreich durch (grün).
+
+## Tests ausführen
+```bash
+mvn test
+```
+
+Die Tests `training.a1.CycleTest` und `training.a2.CycleTest` prüfen, ob zyklische Abhängigkeiten zwischen den jeweiligen Paketen eliminiert wurden.
