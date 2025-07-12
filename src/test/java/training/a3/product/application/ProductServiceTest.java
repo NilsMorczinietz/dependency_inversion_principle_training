@@ -2,105 +2,114 @@ package training.a3.product.application;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import training.a3.customer.application.CustomerService;
 import training.a3.customer.domain.Customer;
-import training.a3.customer.domain.CustomerId;
-import training.a3.customer.domain.CustomerRepository;
 import training.a3.product.domain.Product;
-import training.a3.product.domain.ProductId;
-import training.a3.product.domain.ProductRepository;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 class ProductServiceTest {
 
-    @Mock
-    private ProductRepository productRepository;
-
-    @Mock
-    private CustomerRepository customerRepository;
-
+    @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CustomerService customerService;
+
+    private Customer customer1, customer2;
+    private Product product1, product2, product3;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productRepository, customerRepository);
+        initializeCustomers();
+        initializeProducts();
+        // Setup interests will be done in individual tests to avoid session issues
+    }
+
+    private void initializeCustomers() {
+        customer1 = new Customer("John", "Doe", "john.doe@example.com", "123 Main St");
+        customer1 = customerService.addCustomer(customer1);
+        
+        customer2 = new Customer("Jane", "Smith", "jane.smith@example.com", "456 Oak Ave");
+        customer2 = customerService.addCustomer(customer2);
+    }
+
+    private void initializeProducts() {
+        product1 = new Product("Laptop", "High-performance laptop", new BigDecimal("999.99"), 10, "Electronics");
+        product1 = productService.addProduct(product1);
+        
+        product2 = new Product("Book", "Programming guide", new BigDecimal("49.99"), 50, "Books");
+        product2 = productService.addProduct(product2);
+        
+        product3 = new Product("Headphones", "Noise-cancelling headphones", new BigDecimal("199.99"), 25, "Electronics");
+        product3 = productService.addProduct(product3);
     }
 
     @Test
     void shouldReturnCorrectTotalWishlistValue() {
-        // Given
-        UUID customerId = UUID.randomUUID();
-        Product product1 = new Product("Product 1", "Great electronics item", new BigDecimal("99.99"), 10, "Electronics");
-        Product product2 = new Product("Product 2", "Interesting book", new BigDecimal("29.99"), 5, "Books");
-        Product product3 = new Product("Product 3", "Stylish clothing", new BigDecimal("49.99"), 20, "Clothing");
+        // Given - setup customer interests
+        productService.addCustomerInterest(customer1.getId().getId(), product1.getId().getId());
+        productService.addCustomerInterest(customer1.getId().getId(), product2.getId().getId());
         
-        List<Product> wishlistProducts = Arrays.asList(product1, product2, product3);
+        UUID customerId = customer1.getId().getId();
+        BigDecimal expectedTotal = new BigDecimal("1049.98");
         
-        when(productRepository.findByInterestedCustomerIdsContains(customerId)).thenReturn(wishlistProducts);
-
         // When
-        BigDecimal totalValue = productService.getTotalWishlistValue(customerId);
-
+        BigDecimal actualTotal = productService.getTotalWishlistValue(customerId);
+        
         // Then
-        assertEquals(new BigDecimal("179.97"), totalValue);
+        assertEquals(0, expectedTotal.compareTo(actualTotal));
     }
 
     @Test
     void shouldReturnZeroWhenCustomerHasNoWishlistProducts() {
-        // Given
-        UUID customerId = UUID.randomUUID();
+        // Given - new customer with no wishlist products
+        Customer newCustomer = new Customer("Bob", "Wilson", "bob@example.com", "789 Pine St");
+        newCustomer = customerService.addCustomer(newCustomer);
         
-        when(productRepository.findByInterestedCustomerIdsContains(customerId)).thenReturn(Collections.emptyList());
-
         // When
-        BigDecimal totalValue = productService.getTotalWishlistValue(customerId);
-
+        BigDecimal totalValue = productService.getTotalWishlistValue(newCustomer.getId().getId());
+        
         // Then
         assertEquals(BigDecimal.ZERO, totalValue);
     }
 
     @Test
     void shouldReturnCorrectProductsForCustomer() {
-        // Given
-        UUID customerId = UUID.randomUUID();
-        Product product1 = new Product("Product 1", "Great electronics item", new BigDecimal("99.99"), 10, "Electronics");
-        Product product2 = new Product("Product 2", "Interesting book", new BigDecimal("29.99"), 5, "Books");
+        // Given - setup customer interests
+        productService.addCustomerInterest(customer1.getId().getId(), product1.getId().getId());
+        productService.addCustomerInterest(customer1.getId().getId(), product2.getId().getId());
         
-        List<Product> customerProducts = Arrays.asList(product1, product2);
+        UUID customerId = customer1.getId().getId();
         
-        when(productRepository.findByInterestedCustomerIdsContains(customerId)).thenReturn(customerProducts);
-
         // When
         List<Product> products = productService.getProductsForCustomer(customerId);
-
+        
         // Then
         assertEquals(2, products.size());
-        assertEquals(customerProducts, products);
+        assertTrue(products.stream().anyMatch(p -> p.getName().equals("Laptop")));
+        assertTrue(products.stream().anyMatch(p -> p.getName().equals("Book")));
     }
 
     @Test
     void shouldReturnEmptyListWhenCustomerHasNoProducts() {
-        // Given
-        UUID customerId = UUID.randomUUID();
+        // Given - new customer with no products
+        Customer newCustomer = new Customer("Alice", "Brown", "alice@example.com", "321 Elm St");
+        newCustomer = customerService.addCustomer(newCustomer);
         
-        when(productRepository.findByInterestedCustomerIdsContains(customerId)).thenReturn(Collections.emptyList());
-
         // When
-        List<Product> products = productService.getProductsForCustomer(customerId);
-
+        List<Product> products = productService.getProductsForCustomer(newCustomer.getId().getId());
+        
         // Then
         assertTrue(products.isEmpty());
     }
@@ -108,60 +117,51 @@ class ProductServiceTest {
     @Test
     void shouldSuccessfullyPurchaseProductWithSufficientStock() {
         // Given
-        UUID customerId = UUID.randomUUID();
-        UUID productId = UUID.randomUUID();
+        UUID customerId = customer1.getId().getId();
+        UUID productId = product1.getId().getId();
         int quantity = 2;
+        int initialStock = product1.getStockQuantity();
         
-        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "123 Main St");
-        Product product = new Product("Test Product", "Test description", new BigDecimal("50.00"), 10, "Test");
-        
-        when(customerRepository.findById(any(CustomerId.class))).thenReturn(Optional.of(customer));
-        when(productRepository.findById(any(ProductId.class))).thenReturn(Optional.of(product));
-
         // When
         boolean success = productService.purchaseProduct(customerId, productId, quantity);
-
+        
         // Then
         assertTrue(success);
-        assertEquals(8, product.getStockQuantity()); // 10 - 2 = 8
+        // Reload product to check stock
+        Product updatedProduct = productService.getProductById(product1.getId()).orElse(null);
+        assertNotNull(updatedProduct);
+        assertEquals(initialStock - quantity, updatedProduct.getStockQuantity());
     }
 
     @Test
     void shouldFailToPurchaseProductWithInsufficientStock() {
         // Given
-        UUID customerId = UUID.randomUUID();
-        UUID productId = UUID.randomUUID();
-        int quantity = 15; // More than available stock
+        UUID customerId = customer1.getId().getId();
+        UUID productId = product1.getId().getId();
+        int quantity = 15; // More than available stock (10)
+        int initialStock = product1.getStockQuantity();
         
-        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "123 Main St");
-        Product product = new Product("Test Product", "Test description", new BigDecimal("50.00"), 10, "Test");
-        
-        when(customerRepository.findById(any(CustomerId.class))).thenReturn(Optional.of(customer));
-        when(productRepository.findById(any(ProductId.class))).thenReturn(Optional.of(product));
-
         // When
         boolean success = productService.purchaseProduct(customerId, productId, quantity);
-
+        
         // Then
         assertFalse(success);
-        assertEquals(10, product.getStockQuantity()); // Stock should remain unchanged
+        // Stock should remain unchanged
+        Product unchangedProduct = productService.getProductById(product1.getId()).orElse(null);
+        assertNotNull(unchangedProduct);
+        assertEquals(initialStock, unchangedProduct.getStockQuantity());
     }
 
     @Test
     void shouldFailToPurchaseProductWhenCustomerNotFound() {
         // Given
-        UUID customerId = UUID.randomUUID();
-        UUID productId = UUID.randomUUID();
+        UUID nonExistentCustomerId = UUID.randomUUID();
+        UUID productId = product1.getId().getId();
         int quantity = 2;
         
-        Product product = new Product("Test Product", "Test description", new BigDecimal("50.00"), 10, "Test");
-        
-        when(customerRepository.findById(any(CustomerId.class))).thenReturn(Optional.empty());
-        when(productRepository.findById(any(ProductId.class))).thenReturn(Optional.of(product));
-
         // When
-        boolean success = productService.purchaseProduct(customerId, productId, quantity);
-
+        boolean success = productService.purchaseProduct(nonExistentCustomerId, productId, quantity);
+        
         // Then
         assertFalse(success);
     }
@@ -169,18 +169,13 @@ class ProductServiceTest {
     @Test
     void shouldFailToPurchaseProductWhenProductNotFound() {
         // Given
-        UUID customerId = UUID.randomUUID();
-        UUID productId = UUID.randomUUID();
+        UUID customerId = customer1.getId().getId();
+        UUID nonExistentProductId = UUID.randomUUID();
         int quantity = 2;
         
-        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "123 Main St");
-        
-        when(customerRepository.findById(any(CustomerId.class))).thenReturn(Optional.of(customer));
-        when(productRepository.findById(any(ProductId.class))).thenReturn(Optional.empty());
-
         // When
-        boolean success = productService.purchaseProduct(customerId, productId, quantity);
-
+        boolean success = productService.purchaseProduct(customerId, nonExistentProductId, quantity);
+        
         // Then
         assertFalse(success);
     }

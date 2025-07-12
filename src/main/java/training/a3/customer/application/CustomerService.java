@@ -2,6 +2,7 @@ package training.a3.customer.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import training.a3.customer.domain.Customer;
 import training.a3.customer.domain.CustomerId;
 import training.a3.customer.domain.CustomerRepository;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class CustomerService {
     private CustomerRepository customerRepository;
     private ProductService productService;

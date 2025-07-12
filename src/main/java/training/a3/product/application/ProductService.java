@@ -2,6 +2,7 @@ package training.a3.product.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import training.a3.product.domain.Product;
 import training.a3.product.domain.ProductId;
 import training.a3.product.domain.ProductRepository;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class ProductService {
     private ProductRepository productRepository;
     private CustomerRepository customerRepository;
