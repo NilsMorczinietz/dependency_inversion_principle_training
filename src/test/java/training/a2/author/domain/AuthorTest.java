@@ -87,4 +87,87 @@ class AuthorTest {
         
         assertEquals("jane.smith@example.com", author.getEmail());
     }
+
+    @Test
+    void shouldManageMultipleBooks() {
+        UUID bookId1 = UUID.randomUUID();
+        UUID bookId2 = UUID.randomUUID();
+        UUID bookId3 = UUID.randomUUID();
+        
+        // Add multiple books
+        author.addBook(bookId1);
+        author.addBook(bookId2);
+        author.addBook(bookId3);
+        
+        assertEquals(3, author.getBookCount());
+        assertTrue(author.getPublishedBookIds().contains(bookId1));
+        assertTrue(author.getPublishedBookIds().contains(bookId2));
+        assertTrue(author.getPublishedBookIds().contains(bookId3));
+    }
+
+    @Test
+    void shouldPreventDuplicateBooks() {
+        UUID bookId = UUID.randomUUID();
+        
+        // Add same book twice
+        author.addBook(bookId);
+        author.addBook(bookId);
+        
+        // Should only appear once
+        assertEquals(1, author.getBookCount());
+        assertEquals(1, author.getPublishedBookIds().size());
+    }
+
+    @Test
+    void shouldHandleNullBookOperations() {
+        // Adding null should not crash or affect count
+        author.addBook(null);
+        assertEquals(0, author.getBookCount());
+        
+        // Removing null should not crash
+        author.removeBook(null);
+        assertEquals(0, author.getBookCount());
+    }
+
+    @Test
+    void shouldSupportProductivityAssessment() {
+        assertEquals(0, author.getBookCount());
+        
+        // Author with no books is not productive
+        assertFalse(author.getBookCount() >= 3);
+        
+        // Add books to make author productive
+        author.addBook(UUID.randomUUID());
+        author.addBook(UUID.randomUUID());
+        assertEquals(2, author.getBookCount());
+        assertFalse(author.getBookCount() >= 3); // Still not productive
+        
+        author.addBook(UUID.randomUUID());
+        assertEquals(3, author.getBookCount());
+        assertTrue(author.getBookCount() >= 3); // Now productive
+    }
+
+    @Test
+    void shouldMaintainBookListIntegrity() {
+        UUID bookId1 = UUID.randomUUID();
+        UUID bookId2 = UUID.randomUUID();
+        UUID bookId3 = UUID.randomUUID();
+        
+        // Add books
+        author.addBook(bookId1);
+        author.addBook(bookId2);
+        author.addBook(bookId3);
+        
+        // Remove one book
+        author.removeBook(bookId2);
+        
+        assertEquals(2, author.getBookCount());
+        assertTrue(author.getPublishedBookIds().contains(bookId1));
+        assertFalse(author.getPublishedBookIds().contains(bookId2));
+        assertTrue(author.getPublishedBookIds().contains(bookId3));
+        
+        // Remove non-existing book should not affect anything
+        author.removeBook(UUID.randomUUID());
+        assertEquals(2, author.getBookCount());
+    }
 }
