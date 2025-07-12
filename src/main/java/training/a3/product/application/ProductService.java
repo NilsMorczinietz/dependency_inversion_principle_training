@@ -71,6 +71,7 @@ public class ProductService {
     }
 
     public BigDecimal getTotalWishlistValue(UUID customerId) {
+        if (customerId == null) throw new IllegalArgumentException("CustomerId is null");
         List<Product> products = getProductsForCustomer(customerId);
         return products.stream()
                       .map(Product::getPrice)

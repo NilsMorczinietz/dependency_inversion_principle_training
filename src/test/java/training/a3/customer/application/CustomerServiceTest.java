@@ -98,19 +98,17 @@ class CustomerServiceTest {
 
     @Test
     void shouldThrowExceptionForNullCustomerId() {
-        // Configure mocks to throw exceptions for null input
-        when(productService.getProductsForCustomer(null))
-            .thenThrow(new IllegalArgumentException("CustomerId is null"));
-        when(productService.getTotalWishlistValue(null))
-            .thenThrow(new IllegalArgumentException("CustomerId is null"));
-
-        // When & Then
+        // When & Then - Direct null validation in service methods
         assertThrows(IllegalArgumentException.class, () -> {
             customerService.getWishlistSize(null);
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
             customerService.getWishlistTotalValue(null);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            customerService.isVipCustomer(null);
         });
     }
 
@@ -155,6 +153,16 @@ class CustomerServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             customerService.getCustomersByLastName("   ");
+        });
+
+        // When & Then - addCustomer with null
+        assertThrows(IllegalArgumentException.class, () -> {
+            customerService.addCustomer(null);
+        });
+
+        // When & Then - getCustomerById with null
+        assertThrows(IllegalArgumentException.class, () -> {
+            customerService.getCustomerById(null);
         });
     }
 }

@@ -51,11 +51,13 @@ public class CustomerService {
     }
 
     public int getWishlistSize(UUID customerId) {
+        if (customerId == null) throw new IllegalArgumentException("CustomerId is null");
         List<Product> products = productService.getProductsForCustomer(customerId);
         return products.size();
     }
 
     public BigDecimal getWishlistTotalValue(UUID customerId) {
+        if (customerId == null) throw new IllegalArgumentException("CustomerId is null");
         return productService.getTotalWishlistValue(customerId);
     }
 
@@ -68,6 +70,7 @@ public class CustomerService {
     }
 
     public boolean isVipCustomer(UUID customerId) {
+        if (customerId == null) throw new IllegalArgumentException("CustomerId is null");
         Optional<Customer> customerOpt = customerRepository.findById(new CustomerId(customerId));
         if (customerOpt.isEmpty()) return false;
         

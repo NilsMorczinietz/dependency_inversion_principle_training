@@ -216,6 +216,16 @@ class ProductServiceTest {
         assertThrows(IllegalArgumentException.class, () -> {
             productService.addCustomerInterest(UUID.randomUUID(), null);
         });
+
+        // When & Then - addProduct with null
+        assertThrows(IllegalArgumentException.class, () -> {
+            productService.addProduct(null);
+        });
+
+        // When & Then - getProductById with null
+        assertThrows(IllegalArgumentException.class, () -> {
+            productService.getProductById(null);
+        });
     }
 
     @Test
