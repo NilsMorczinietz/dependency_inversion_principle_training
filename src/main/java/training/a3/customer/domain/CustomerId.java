@@ -1,4 +1,4 @@
-package training.a2.author.domain;
+package training.a3.customer.domain;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -11,9 +11,9 @@ import java.util.UUID;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AttributeOverride(name = "id", column = @Column(name = "author_id"))
-public class AuthorId extends GenericId {
-    public AuthorId(UUID id) {
+@AttributeOverride(name = "id", column = @Column(name = "customer_id"))
+public class CustomerId extends GenericId {
+    public CustomerId(UUID id) {
         super(id);
     }
 }

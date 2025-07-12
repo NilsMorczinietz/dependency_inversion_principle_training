@@ -1,57 +1,32 @@
-# Dependency Inversion Principle (DIP) Training
+# 🎯 Dependency Inversion Principle (DIP) Training
 
-Dieses Projekt dient als Training für die Anwendung des **Dependency Inversion Principle** (DIP), einem der SOLID-Prinzipien.
+**Ziel:** Zyklische Abhängigkeiten durch Anwendung des Dependency Inversion Principle eliminieren.
 
-## Aufgabenstellung
+## 📋 Aufgaben
 
-### Ziel
-Das Ziel ist es, zyklische Abhängigkeiten zwischen Paketen durch die Anwendung des Dependency Inversion Principle zu eliminieren.
+| Task | Domäne | Pakete | Details |
+|------|--------|--------|---------|
+| **A1** | 🎓 Universität | `course` ↔ `student` | [→ A1](src/main/java/training/a1/README.md) |
+| **A2** | 📚 Bibliothek | `book` ↔ `author` | [→ A2](src/main/java/training/a2/README.md) |
+| **A3** | 🛒 E-Commerce | `product` ↔ `customer` | [→ A3](src/main/java/training/a3/README.md) |
 
-### Aktueller Zustand
-Das Projekt enthält momentan eine zyklische Abhängigkeit zwischen den Paketen:
-- `training.a1.course` 
-- `training.a1.student`
+## 🚀 Anleitung
 
-Diese zyklische Abhängigkeit führt dazu, dass der ArchUnit-Test `CycleTest` fehlschlägt.
+1. **Problem prüfen:** `mvn test -Dtest="training.*.CycleTest"` → alle Tests ❌ rot
+2. **Aufgabe wählen:** A1, A2 oder A3 README lesen
+3. **DIP anwenden:** Zyklische Abhängigkeiten auflösen
+4. **Erfolg prüfen:** Tests werden ✅ grün
 
-## Aufgaben
+## 🧪 Tests
 
-### Aufgabe A1: Zyklische Abhängigkeiten auflösen
-**Paket:** `training.a1`
-
-**Problem:** 
-- `CourseService` ist abhängig von `StudentRepository` und `Student`
-- `StudentService` ist abhängig von `CourseService` und `Course`
-- Dies führt zu einer zyklischen Abhängigkeit zwischen den Paketen
-
-**Erfolgskriterium:**
-Wenn das DIP korrekt angewendet wurde, läuft der Test `CycleTest.testNoCyclicDependenciesBetweenPackages()` erfolgreich durch (grün).
-
-Der Test `training.a1.CycleTest` prüft, ob zyklische Abhängigkeiten zwischen den Paketen eliminiert wurden.
-
-### Aufgabe A2: Bibliotheks-Domäne - Zyklische Abhängigkeiten auflösen
-**Paket:** `training.a2`
-
-**Domäne:** Bibliotheksverwaltung mit Büchern und Autoren
-
-**Problem:** 
-- `BookService` ist abhängig von `AuthorRepository` und `Author`
-- `AuthorService` ist abhängig von `BookService` und `Book`
-- `Book` und `Author` Entitäten referenzieren sich gegenseitig über IDs
-- Dies führt zu einer zyklischen Abhängigkeit zwischen den Paketen `book` und `author`
-
-**Spezifische zyklische Abhängigkeiten:**
-- `BookService.assignAuthorToBook()` verwendet `Author` und `AuthorRepository`
-- `AuthorService.getBookCountForAuthor()` verwendet `BookService`
-- `Book.addAuthor()` akzeptiert `Author` Parameter
-- `Author.addBook()` akzeptiert `Book` Parameter
-
-**Erfolgskriterium:**
-Wenn das DIP korrekt angewendet wurde, läuft der Test `training.a2.CycleTest.testNoCyclicDependenciesBetweenPackages()` erfolgreich durch (grün).
-
-## Tests ausführen
 ```bash
-mvn test
+# Alle Cycle-Tests
+mvn test -Dtest="training.*.CycleTest"
+
+# Einzelne Aufgabe
+mvn test -Dtest="training.a1.CycleTest"
+mvn test -Dtest="training.a2.CycleTest" 
+mvn test -Dtest="training.a3.CycleTest"
 ```
 
-Die Tests `training.a1.CycleTest` und `training.a2.CycleTest` prüfen, ob zyklische Abhängigkeiten zwischen den jeweiligen Paketen eliminiert wurden.
+**Erfolgskriterium:** Alle CycleTests grün ✅
