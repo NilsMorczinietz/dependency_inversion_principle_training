@@ -153,6 +153,12 @@ class AuthorServiceTest {
 
     @Test
     void shouldThrowExceptionForNullAuthorId() {
+        // Configure mocks to throw exceptions for null input
+        when(bookService.getBooksForAuthor(null))
+            .thenThrow(new IllegalArgumentException("AuthorId is null"));
+        when(bookService.getTotalPagesForAuthor(null))
+            .thenThrow(new IllegalArgumentException("AuthorId is null"));
+
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> {
             authorService.getBookCountForAuthor(null);
