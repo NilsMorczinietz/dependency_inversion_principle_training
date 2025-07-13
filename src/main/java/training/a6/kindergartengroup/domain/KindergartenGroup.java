@@ -26,11 +26,10 @@ public class KindergartenGroup {
     
     @Column(nullable = false)
     private int maxChildren;
-    
+
     @ElementCollection
     @CollectionTable(name = "kindergarten_group_children", joinColumns = @JoinColumn(name = "kindergarten_group_id"))
     @Column(name = "child_id")
-    @Convert(converter = training.a6.child.domain.ChildIdConverter.class)
     private List<ChildId> childIds = new ArrayList<>();
     
     public KindergartenGroup(String name, String teacher, int maxChildren) {
@@ -39,7 +38,7 @@ public class KindergartenGroup {
         this.teacher = teacher;
         this.maxChildren = maxChildren;
     }
-    
+
     public void addChildById(ChildId childId) {
         if (childIds.size() < maxChildren && !childIds.contains(childId)) {
             this.childIds.add(childId);

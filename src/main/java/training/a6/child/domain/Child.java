@@ -31,13 +31,11 @@ public class Child {
     @ElementCollection
     @CollectionTable(name = "child_friends_groups", joinColumns = @JoinColumn(name = "child_id"))
     @Column(name = "friends_group_id")
-    @Convert(converter = training.a6.friendsgroup.domain.FriendsGroupIdConverter.class)
     private List<FriendsGroupId> friendsGroupIds = new ArrayList<>();
     
     @ElementCollection
     @CollectionTable(name = "child_kindergarten_groups", joinColumns = @JoinColumn(name = "child_id"))
     @Column(name = "kindergarten_group_id")
-    @Convert(converter = training.a6.kindergartengroup.domain.KindergartenGroupIdConverter.class)
     private List<KindergartenGroupId> kindergartenGroupIds = new ArrayList<>();
     
     public Child(String firstName, String lastName, int age) {

@@ -27,7 +27,6 @@ public class FriendsGroup {
     @ElementCollection
     @CollectionTable(name = "friends_group_children", joinColumns = @JoinColumn(name = "friends_group_id"))
     @Column(name = "child_id")
-    @Convert(converter = training.a6.child.domain.ChildIdConverter.class)
     private List<ChildId> childIds = new ArrayList<>();
     
     public FriendsGroup(String name, String activity) {
