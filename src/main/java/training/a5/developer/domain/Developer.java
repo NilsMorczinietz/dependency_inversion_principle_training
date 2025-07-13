@@ -74,10 +74,6 @@ public class Developer {
         return skills.contains(skill);
     }
 
-    public int getProjectCount() {
-        return assignedProjects.size();
-    }
-
     public boolean isSenior() {
         return "Senior".equalsIgnoreCase(experienceLevel);
     }

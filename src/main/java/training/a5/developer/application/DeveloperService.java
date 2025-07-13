@@ -61,15 +61,4 @@ public class DeveloperService {
         }
         return totalRate.divide(BigDecimal.valueOf(developers.size()), 2, java.math.RoundingMode.HALF_UP);
     }
-
-    public int averageProjectsPerDeveloper() {
-        List<Developer> developers = developerRepository.findAll();
-        if (developers.isEmpty()) return 0;
-        
-        int totalProjects = 0;
-        for (Developer developer : developers) {
-            totalProjects += developer.getProjectCount();
-        }
-        return totalProjects / developers.size();
-    }
 }
