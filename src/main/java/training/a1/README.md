@@ -31,4 +31,4 @@
 - `mvn test -Dtest="training.a1.StudentCourseTest"` wird grün
 
 ---
-[← Zurück zur Übersicht](../../../README.md)
+[← Zurück zur Übersicht](../../../../../README.md)

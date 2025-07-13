@@ -32,4 +32,4 @@
 - `mvn test -Dtest="training.a3.CustomerProductTest"` wird grün
 
 ---
-[← Zurück zur Übersicht](../../../README.md)
+[← Zurück zur Übersicht](../../../../../README.md)
