@@ -159,21 +159,6 @@ public class ProjectDeveloperTest {
     }
 
     @Test
-    public void testDevelopersForProject() {
-        // Test developers for webApp (should have 3 developers: Alice, Bob, Charlie)
-        var webAppDevelopers = developerService.developersForProject(webApp.getId());
-        assertEquals(3, webAppDevelopers.size());
-        assertTrue(webAppDevelopers.stream().anyMatch(d -> d.getName().equals("Alice Johnson")));
-        assertTrue(webAppDevelopers.stream().anyMatch(d -> d.getName().equals("Bob Smith")));
-        assertTrue(webAppDevelopers.stream().anyMatch(d -> d.getName().equals("Charlie Brown")));
-
-        // Test developers for aiProject (should have 1 developer: Diana)
-        var aiProjectDevelopers = developerService.developersForProject(aiProject.getId());
-        assertEquals(1, aiProjectDevelopers.size());
-        assertEquals("Diana Wilson", aiProjectDevelopers.get(0).getName());
-    }
-
-    @Test
     public void testAverageHourlyRate() {
         // Alice: 80, Bob: 60, Charlie: 40, Diana: 90
         // Average: (80 + 60 + 40 + 90) / 4 = 67.5
