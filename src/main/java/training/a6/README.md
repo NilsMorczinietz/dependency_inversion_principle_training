@@ -59,11 +59,16 @@ Diese Aufgabe ist **schwieriger** als die vorherigen, da:
 ## Tests
 
 ### Integration-Tests
-- `training.a6.KindergartenIntegrationTest` - Cross-Aggregate Integration Tests
+- `training.a6.KindergartenIntegrationTest` - Cross-Aggregate Integration Tests (8 Tests)
   - Tests für Gruppenzuweisungen
-  - Tests für soziales Verhalten
+  - Tests für soziales Verhalten  
   - Tests für Kapazitätsgrenzen
   - Tests für Freundschaftsbeziehungen
+  - **Tests für `countGroupsForChild` Methoden**
+    - `shouldCountFriendsGroupsForChild()` - Zählt Freundesgruppen für ein Kind
+    - `shouldCountKindergartenGroupsForChild()` - Zählt Kindergartengruppen für ein Kind
+    - `shouldCountAllGroupsForChildAcrossServices()` - Service-übergreifende Gruppenzählung
+    - `shouldHandleChildNotInAnyGroup()` - Rand-Fall: Kind in keiner Gruppe
 
 ### Architektur-Tests
 - `training.a6.CycleTest` - Zyklus-Erkennung
