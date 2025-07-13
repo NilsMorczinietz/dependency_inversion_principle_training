@@ -14,7 +14,7 @@ import java.util.List;
 public class FriendsGroupService {
 
     private final FriendsGroupRepository friendsGroupRepository;
-    private final ChildService childService; // <- Zyklus!
+    private final ChildService childService;
 
     public FriendsGroupService(FriendsGroupRepository friendsGroupRepository,
                               @Lazy ChildService childService) {
@@ -39,7 +39,6 @@ public class FriendsGroupService {
         }
     }
 
-    // PROBLEM: Diese Methode erstellt zyklische Service-Abhängigkeit
     public int countGroupsForChild(ChildId childId) {
         List<FriendsGroup> allGroups = friendsGroupRepository.findAll();
         return (int) allGroups.stream()
@@ -48,7 +47,6 @@ public class FriendsGroupService {
     }
 
     public boolean areChildrenInSameGroup(ChildId child1, ChildId child2) {
-        // Diese Methode hängt vom ChildService ab (zyklisch)
         if (childService.findById(child1) == null || childService.findById(child2) == null) {
             return false;
         }

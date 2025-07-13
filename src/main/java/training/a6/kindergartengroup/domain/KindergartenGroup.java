@@ -39,7 +39,6 @@ public class KindergartenGroup {
         this.teacher = teacher;
         this.maxChildren = maxChildren;
     }
-
     
     public void addChildById(ChildId childId) {
         if (childIds.size() < maxChildren && !childIds.contains(childId)) {

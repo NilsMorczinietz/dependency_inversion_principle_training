@@ -12,8 +12,8 @@ import training.a6.kindergartengroup.application.KindergartenGroupService;
 public class ChildService {
 
     private final ChildRepository childRepository;
-    private final FriendsGroupService friendsGroupService; // <- Zyklus!
-    private final KindergartenGroupService kindergartenGroupService; // <- Zyklus!
+    private final FriendsGroupService friendsGroupService;
+    private final KindergartenGroupService kindergartenGroupService;
 
     public ChildService(ChildRepository childRepository, 
                        @Lazy FriendsGroupService friendsGroupService,
@@ -32,7 +32,6 @@ public class ChildService {
         return childRepository.findById(childId).orElse(null);
     }
 
-    // PROBLEM: Diese Methoden erstellen zyklische Service-Abhängigkeiten
     public int getTotalGroupsForChild(ChildId childId) {
         int friendsGroups = friendsGroupService.countGroupsForChild(childId);
         int kindergartenGroups = kindergartenGroupService.countGroupsForChild(childId);
