@@ -24,13 +24,6 @@ public class Developer {
     @Setter(AccessLevel.PRIVATE)    // only for JPA
     private DeveloperId id;
 
-    public void setId(UUID id){
-        this.id = new DeveloperId(id);
-    }
-    public void setId(DeveloperId id){
-        this.id = id;
-    }
-
     // the name of the developer
     private String name;
 

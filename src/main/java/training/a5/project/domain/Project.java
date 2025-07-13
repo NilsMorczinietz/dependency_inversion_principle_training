@@ -25,13 +25,6 @@ public class Project {
     @Setter(AccessLevel.PRIVATE)    // only for JPA
     private ProjectId id;
 
-    public void setId(UUID id){
-        this.id = new ProjectId(id);
-    }
-    public void setId(ProjectId id){
-        this.id = id;
-    }
-
     // the name of the project
     private String name;
 
