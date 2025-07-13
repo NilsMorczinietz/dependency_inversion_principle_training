@@ -9,6 +9,12 @@
 3. Beheben Sie alle Package-Zyklen
 4. **Wichtig:** Business-Logic-Tests müssen grün bleiben
 
+## Hinweise zur Lösung
+
+**Entfernung von Code:** Es ist ausdrücklich erlaubt, unnötige Code-Teile zu entfernen, die nicht benötigt werden und auch nicht von Tests abgedeckt sind. Dies ist sogar erwünscht, um eine saubere Architektur zu erreichen.
+
+**Fokus auf getestete Funktionalität:** Konzentrieren Sie sich auf die Funktionalität, die durch die Tests validiert wird. Alles andere kann entfernt werden, wenn es zur Auflösung der zyklischen Abhängigkeiten beiträgt.
+
 ## Domain Beschreibung
 
 Das System verwaltet ein Software-Entwicklungsunternehmen mit folgenden Entitäten:
