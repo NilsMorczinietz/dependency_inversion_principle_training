@@ -22,10 +22,6 @@ Das System enthält zyklische Abhängigkeiten zwischen den Paketen:
 
 ## Tests
 
-### Domain-Tests (Unit Tests)
-- `training.a5.project.domain.*Test` - Project Domain Tests
-- `training.a5.developer.domain.*Test` - Developer Domain Tests
-
 ### Integration-Tests (Service-Layer)
 - `training.a5.ProjectDeveloperTest` - Cross-Aggregate Integration Tests
   - Tests für Entwicklerzuweisungen
@@ -39,7 +35,6 @@ Das System enthält zyklische Abhängigkeiten zwischen den Paketen:
 ## Erfolgskriterium
 
 - `mvn test -Dtest="training.a5.CycleTest"` wird grün
-- `mvn test -Dtest="training.a5.*.domain.*Test"` bleibt grün
 - `mvn test -Dtest="training.a5.ProjectDeveloperTest"` wird grün
 
 ---
