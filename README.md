@@ -13,6 +13,8 @@
 | **A6** | Kindergarten | `child` ↔ `friendsgroup` ↔ `kindergartengroup` | [→ A6](src/main/java/training/a6/README.md) |
 | **A7** | Krankenhaus | `doctor` ↔ `patient` | [→ A7](src/main/java/training/a7/README.md) |
 
+> **💡 Hinweis:** Alle Aufgaben wurden getestet und sind lösbar. Jede Aufgabe hat funktionierende Business-Logic-Tests und eine klare DIP-Lösung.
+
 ## Anleitung
 
 1. **Problem prüfen:** `mvn test -Dtest="training.*.CycleTest"` → alle Tests rot
