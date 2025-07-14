@@ -15,7 +15,7 @@ import java.util.List;
 @Transactional
 public class DoctorService {
     private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository; // Creates cyclic dependency!
+    private PatientRepository patientRepository;
 
     @Autowired
     public DoctorService(

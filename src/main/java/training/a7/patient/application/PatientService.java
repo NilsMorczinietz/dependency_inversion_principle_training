@@ -15,7 +15,7 @@ import java.util.List;
 @Transactional
 public class PatientService {
     private PatientRepository patientRepository;
-    private DoctorService doctorService; // Creates cyclic dependency!
+    private DoctorService doctorService;
 
     @Autowired
     public PatientService(PatientRepository patientRepository, DoctorService doctorService) {
@@ -34,7 +34,6 @@ public class PatientService {
                 () -> new IllegalArgumentException("Patient not found"));
     }
 
-    // Cyclic dependency: Uses DoctorService to calculate treatment costs
     public Double calculateTreatmentCost(PatientId patientId) {
         if (patientId == null) throw new IllegalArgumentException("Patient ID is null");
         Patient patient = getPatientById(patientId);
