@@ -7,7 +7,6 @@ import training.a7.doctor.domain.Doctor;
 import training.a7.doctor.domain.DoctorId;
 import training.a7.doctor.domain.DoctorRepository;
 import training.a7.patient.domain.Patient;
-import training.a7.patient.domain.PatientId;
 import training.a7.patient.domain.PatientRepository;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
 @Transactional
 public class DoctorService {
     private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
+    private PatientRepository patientRepository; // Creates cyclic dependency!
 
     @Autowired
     public DoctorService(
@@ -50,29 +49,6 @@ public class DoctorService {
     public List<Patient> getPatientsForDoctor(DoctorId doctorId) {
         if (doctorId == null) throw new IllegalArgumentException("Doctor ID is null");
         return patientRepository.findByAssignedDoctor(doctorId);
-    }
-
-    // Cyclic dependency: Uses PatientService to calculate workload statistics
-    public Double calculateDoctorWorkload(DoctorId doctorId) {
-        if (doctorId == null) throw new IllegalArgumentException("Doctor ID is null");
-        Doctor doctor = getDoctorById(doctorId);
-        List<Patient> patients = getPatientsForDoctor(doctorId);
-        return doctor.calculateWorkload(patients);
-    }
-
-    // Cyclic dependency: Uses PatientService to determine capacity
-    public Integer calculateAvailableCapacity(DoctorId doctorId) {
-        if (doctorId == null) throw new IllegalArgumentException("Doctor ID is null");
-        Doctor doctor = getDoctorById(doctorId);
-        List<Patient> allPatients = patientRepository.findAll();
-        return doctor.calculateAvailableCapacity(allPatients);
-    }
-
-    public Double calculateAverageTreatmentDuration(DoctorId doctorId) {
-        if (doctorId == null) throw new IllegalArgumentException("Doctor ID is null");
-        Doctor doctor = getDoctorById(doctorId);
-        List<Patient> patients = getPatientsForDoctor(doctorId);
-        return doctor.calculateAverageTreatmentDuration(patients);
     }
 
     public List<Doctor> getDoctorsBySpecialization(String specialization) {

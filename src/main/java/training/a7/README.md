@@ -1,6 +1,6 @@
 # Aufgabe A7: Krankenhaus-Domäne
 
-**Problem:** Zyklische Abhängigkeiten zwischen `doctor` und `patient` Paketen mit komplexen medizinischen Berechnungsabhängigkeiten eliminieren.
+**Problem:** Zyklische Abhängigkeiten zwischen `doctor` und `patient` Paketen eliminieren.
 
 ## Aufgabe
 
@@ -9,34 +9,42 @@
 3. Beheben Sie alle Package-Zyklen
 4. **Wichtig:** Business-Logic-Tests müssen grün bleiben
 
+## Herausforderung
+
+Die Domänen haben eine **bidirektionale Beziehung**:
+- **Doctor** muss Patienten zuweisen können
+- **Patient** muss einem Arzt zugewiesen werden können
+- **Services** brauchen Zugriff auf beide Domänen für Berechnungen
+
+**Warum entsteht der Zyklus?**
+- `DoctorService` braucht `PatientRepository` für Patientenlisten
+- `PatientService` braucht `DoctorService` für Behandlungskosten-Berechnungen
+- Domain-Objekte referenzieren sich teilweise direkt
+
 ## Domänen-Beschreibung
 
 ### Doctor (Arzt)
-- Verwaltet zugewiesene Patienten
-- Berechnet Arbeitsbelastung basierend auf Patient-Komplexität
-- Berechnet durchschnittliche Behandlungsdauer pro Spezialisierung
-- Bestimmt verfügbare Kapazität für neue Patienten
-- Validiert Behandlungseignung basierend auf Patient-Diagnosen
+- Verwaltet Name, Spezialisierung und Stundensatz
+- Kann Patienten zugewiesen bekommen
+- Einfache Datenstruktur ohne komplexe Berechnungen
 
-### Patient
-- Hat Diagnosen, Behandlungshistorie und Risikofaktoren
-- Berechnet Behandlungskosten basierend auf Doctor-Spezialisierung
-- Berechnet Prioritätsscore basierend auf Doctor-Verfügbarkeit
-- Validiert Behandlungsplan anhand Doctor-Qualifikationen
-- Berechnet optimale Behandlungszeit basierend auf Doctor-Erfahrung
+### Patient  
+- Hat Name, Diagnose und Priorität
+- Kann einem Arzt zugewiesen werden
+- Einfache Datenstruktur ohne komplexe Berechnungen
 
 ## Tests
 
 ### Domain-Tests (Unit Tests)
-- `training.a7.doctor.domain.*Test` - Doctor Domain Tests
-- `training.a7.patient.domain.*Test` - Patient Domain Tests
+- `training.a7.doctor.domain.DoctorTest` - Doctor Domain Tests
+- `training.a7.patient.domain.PatientTest` - Patient Domain Tests
 
 ### Integration-Tests (Service-Layer)
 - `training.a7.DoctorPatientTest` - Cross-Aggregate Integration Tests
-  - Tests für Arbeitsbelastungs-Berechnungen
-  - Tests für Behandlungskosten-Berechnungen
-  - Tests für Prioritäts-Scoring
-  - Tests für Kapazitäts-Planungen
+  - Tests für Behandlungskosten-Berechnungen (zyklische Abhängigkeit)
+  - Tests für Arzt-Patient-Zuweisungen
+  - Tests für Spezialisierungs-Filterung
+  - Tests für Prioritäts-Filterung
 
 ### Architektur-Tests
 - `training.a7.CycleTest` - Zyklus-Erkennung
