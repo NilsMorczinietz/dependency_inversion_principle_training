@@ -23,6 +23,8 @@
 4. **Wichtig:** Business-Logic-Tests müssen grün bleiben
 5. **Erfolg prüfen:** Tests werden grün
 
+> **📝 Hinweis:** Zum Lösen der Aufgaben müssen **keine Tests verändert** werden, nur der Produktionscode wird refactoriert.
+
 ## Tests
 
 ```bash
